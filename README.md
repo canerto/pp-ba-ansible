@@ -1,5 +1,27 @@
 # Ansible
 
+## Grundlagen
+
+### Control Node
+
+### Managed Nodes
+
+### Inventory
+
+### Modules
+
+### Ad-hoc Tasks
+
+### Playbooks
+
+### Variables
+
+### Facts
+
+### Roles
+
+
+
 ## Installation Control Node unter Debian
 
 Um die aktuellste Version von Ansible für Ubuntu zu nutzen, kann man die PPA (personal package archive) dem System hinzufügen.
@@ -17,5 +39,6 @@ $ sudo apt install ansible
  
 
 
+# Ansible AWX
 
-
+# Ansible Vault
