@@ -58,9 +58,9 @@ und sind einfach zu lesen, zu schreiben und zu verstehen.
 ### Roles
 Eine Role ist eine Sammlung von mehreren Playbooks, die notwendig sind um ein Zielszenario zu erreichen, z.B. ein Webserver installieren.
 
+## Einführung
 
-
-## Installation Control Node unter Debian
+### Installation Control Node unter Debian
 
 Um die aktuellste Version von Ansible für Ubuntu zu nutzen, kann man die PPA (personal package archive) dem System hinzufügen.
 
@@ -74,7 +74,15 @@ $ sudo apt-add-repository --yes --update ppa:ansible/ansible
 $ sudo apt install ansible
 ```
 
- 
+### SSH-Konfiguration
+
+Ansible kommuniziert primär mit den Managed Nodes via SSH. Zuerst erzeugen wir ein SSH-Schlüsselpaar auf dem Control Node,
+um später eine passwortlose Anmeldung auf den Managed Nodes zu ermöglichen.
+
+```
+$ ssh-keygen
+```
+
 
 
 # Ansible AWX
