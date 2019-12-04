@@ -99,7 +99,6 @@ $ ssh root@<entfernter Node>
 ```
 
 
-
 # Ansible AWX
 
 # Ansible Vault
