@@ -83,6 +83,21 @@ um später eine passwortlose Anmeldung auf den Managed Nodes zu ermöglichen.
 $ ssh-keygen
 ```
 
+Die folgenden Fragen können wir mit Return bestätigen. Dadurch entstehen nun im /.ssh/ Verzeichnis zwei Dateien. Es handelt sich um 
+den private und public Key.
+Der public Key muss nun auf die zu verwaltenden Nodes kopiert werden.
+
+```
+$ cd /root/.ssh/
+$ ssh-copyid root@<entfernter Node>
+```
+
+Im Anschluss versuchen wir eine SSH-Verbindung auf den zu verwaltenden Node aufzubauen, ohne ein Passwort eingeben zu müssen.
+
+```
+$ ssh root@<entfernter Node>
+```
+
 
 
 # Ansible AWX
