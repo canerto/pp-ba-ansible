@@ -98,6 +98,47 @@ Im Anschluss versuchen wir eine SSH-Verbindung auf den zu verwaltenden Node aufz
 $ ssh root@<entfernter Node>
 ```
 
+### Konfiguration Ansible
+
+Die allgemeinen Einstellungen sind in der `ansible.cfg` Datei unter dem Pfad `/etc/ansible/` zu finden. Wir benötigen nun die Inventory-Datei `hosts` im gleichen Ordnern.
+Der Pfad hierfür ist per Default eingestellt auf `/etc/ansible/hosts`, welcher in der `anibsle.cfg` Datei geändert werden kann. 
+
+Wir öffnen nun die Datei wie folgt:
+
+```
+$ sudo vi /etc/ansible/hosts
+```
+
+Hier sind bereits einige Beispiele inhalten. Man kann die Hosts nun als IP-Adressen, DNS-Namen oder als eigene Namen definieren.
+Wir fügen nun folgende Zeile hinzu und speichern anschließend die Datei:
+
+```
+$ itsserver ansible_host=10.0.0.11
+```
+
+Nun können wir testen, ob alles richtig konfiguriert wurde, in dem wir unseren Host pingen und schauen, welche Rückmeldung wir erhalten:
+
+```
+$ ansible -m ping all
+```
+
+Dieser Befehl bezieht sich auf alle in der Inventory-Datei befindenden Hosts. Wenn wir nur einen Host anpingen möchten, könnte man sich auf einen
+Host spezialiseren und den Namen angeben. In unserem Fall würde auch folgender Befehl funktionieren:
+
+```
+$ ansible -m ping itsserver
+``` 
+
+Als Ausgabe sollten wir folgendes erhalten:
+
+```
+itsserver | SUCCESS => {
+    "changed": false,
+    "ping": "pong"
+}
+```
+
+###
 
 # Ansible AWX
 
