@@ -1,3 +1,5 @@
+---
+
 - name: Public key is deployed to managed hosts for Ansible
   hosts: all
 
