@@ -14,8 +14,8 @@
 ## blue.example.com
 ## 192.168.100.1
 ## 192.168.100.10
-[default]
-itsserver ansible_host=10.0.0.11
+
+itsserver ansible_host=10.0.0.11 ansible_ssh_user=itsadmin ansible_ssh_pass=itsadmin
 # Ex 2: A collection of hosts belonging to the 'webservers' group
 
 ## [webservers]
