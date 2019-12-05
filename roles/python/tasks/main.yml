@@ -1,0 +1,6 @@
+---
+- name: Check if python is installed and get version
+  apt:
+- name: Install Python
+  apt: name=python3-pip state=present
+
