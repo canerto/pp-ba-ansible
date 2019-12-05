@@ -6,4 +6,4 @@
   become_user: root
   roles:
     - python
-    - docker
+    - deploy_ssh_keys
