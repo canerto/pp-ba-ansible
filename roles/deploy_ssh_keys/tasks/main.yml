@@ -2,11 +2,8 @@
 
 - name: Public key is deployed to managed hosts for Ansible
   hosts: all
-  become: yes
-  become_method: sudo
-  become_user: root
   tasks:
-    - name: Ensure key is in root's ~/.ssh/authorized_hosts
+    - name: Ensure key is in root's ~/.ssh/authorized_keys
       authorized_key:
         user: root
         state: present
