@@ -101,10 +101,9 @@ $ itsserver3 ansible_host=10.0.0.13
 $ itsserver4 ansible_host=10.0.0.14 
 ```
 
-Wir haben nun die Hosts angegeben, mit der IP-Adresse und welchen User wir verwenden. Das Passwort sollte normalerweise nicht als Klartext
-eingefügt werden. Hierfür gibt es Ansible Vault, womit Passwörter verschlüsselt werden können. Dazu kommen wir aber später.
+Wir haben nun die Hosts angegeben mit der IP-Adresse. 
 
-   ```
+```
 A trivial test module, this module always returns pong on successful contact. It does not make sense in playbooks, but it is useful from /usr/bin/ansible to verify the ability to login and that a usable python is configured.
     This is NOT ICMP ping, this is just a trivial test module.
     For Windows targets, use the win_ping module instead.
@@ -155,7 +154,7 @@ itsserver4 | SUCCESS => {
 }
 ```
 
-### SSH-Konfiguration
+## SSH-Konfiguration
 
 Ansible kommuniziert primär mit den Managed Nodes via SSH. Zuerst erzeugen wir ein SSH-Schlüsselpaar auf dem Control Node,
 um später eine passwortlose Anmeldung auf den Managed Nodes zu ermöglichen.
@@ -174,9 +173,9 @@ Die folgenden Fragen können wir mit Return bestätigen. Dadurch entstehen nun i
 den private und public Key.
 
 
-### SSH-Key-Verteilung 
+## SSH-Key-Verteilung 
 
-## explizit für einen Node
+### explizit für einen Node
 Der public Key muss nun auf die zu verwaltenden Nodes kopiert werden.
 
 ```
@@ -190,49 +189,149 @@ Im Anschluss versuchen wir eine SSH-Verbindung auf den zu verwaltenden Node aufz
 $ ssh root@<entfernter Node>
 ```
 
-## mit einem Playbook für alle Nodes
+### mit einem Playbook für alle Nodes
 
 1. Deployen der SSH-Keys für Nodes 2-4
  
 2. Playbook mit Erklärung der einzelnen Zeilen (absent, exclusive, ...)
 
-```
-- name: Public key is deployed to managed hosts for Ansible
-  hosts: all
+    ```
+    - name: Public key is deployed to managed hosts for Ansible
+      hosts: all
 
-  tasks:
-  - name: Ensure key is in root's ~/.ssh/authorized_hosts
-    authorized_key:
-     user: root
-     state: present
-     key: '{{ item }}'
-    with_file:
-     - ~/.ssh/id_rsa.pub
-```
+      tasks:
+      - name: Ensure key is in root's ~/.ssh/authorized_hosts
+        authorized_key:
+         user: root
+         state: present
+         key: '{{ item }}'
+        with_file:
+         - ~/.ssh/id_rsa.pub
+    ```
 
 3. Befehl zum Ausführen des Playbooks:
 
-```
-ansible-playbook <playbook-name>
-```
+    ```
+    ansible-playbook <playbook-name>
+    ```
 
 4. Fehler andeuten und Erklärung, da Authentifizierung (Erstkontakt) nicht stattfinden kann ohne PW:
+
 
 ```
 ansible-playbook <playbook-name> --ask-pass
 ```
 
+Alternativ:
+Alternativ kann man in der Inventory angeben, welchen User wir verwenden und welches Passwort. Das Passwort sollte normalerweise nicht 
+als Klartext eingefügt werden. Hierfür gibt es Ansible Vault, womit Passwörter verschlüsselt werden können. Dazu kommen wir aber später.
+
+```
+$ itsserver1 ansible_host=10.0.0.11 ansible_ssh_user=itsadmin ansible_ssh_pass=itsadmin
+$ itsserver2 ansible_host=10.0.0.12 ansible_ssh_user=itsadmin ansible_ssh_pass=itsadmin 
+$ itsserver3 ansible_host=10.0.0.13 ansible_ssh_user=itsadmin ansible_ssh_pass=itsadmin
+$ itsserver4 ansible_host=10.0.0.14 ansible_ssh_user=itsadmin ansible_ssh_pass=itsadmin
+```
+
 5. Unterschied von manueller Verteilung für ein Host und Verteilung mit einem Playbook für mehrere Hosts
 
-### Weniger priviligierte Accounts erstellen und Gruppen zuordnen
+6. Als Rolle hinzufügen (Best Practice: https://docs.ansible.com/ansible/latest/user_guide/playbooks_best_practices.html)
 
-### Software und OS updaten
+    1. Roles Ordner erstellen
+    2. Neuer Ordner mit Rollen-Name => deploy_ssh_keys
+    3. Ordner "tasks" erstellen
+    4. main.yml erstellen
+    5. Code hinzufügen von Punkt 2
 
-### Software und OS automatisiert updaten (zeitgesteuerte Jobs)
 
-### Software Docker installieren und Container automatisiert erstellen
 
-### GitLab 
+# Weniger priviligierte Accounts erstellen und Gruppen zuordnen mit Variablen
+
+
+
+Wir erstellen nun eine neue Rolle "add user" um einen User mit weniger priviligierten Rechten zu erstellen und dann Gruppen zuzuordnen.
+
+```
+$ cd roles
+$ mkdir add_user
+$ mkdir tasks
+$ vim add_user
+```
+
+Anschließend fügen wir folgenden Code hinzu:
+
+```
+- name: Add user
+  hosts: all
+  tasks:
+    - name: Add a new user with username and commentname
+      user:
+        name: "{{ username }}"
+        comment: "{{ name }}"
+```
+
+Hier wurden nun die Variablen "{{ username }}" und "{{ name }}" eingefügt. Das bedeutet, dass man diesem Task eigene Namen übergenen kann.
+Dies kann wie folgt durchgeführt werden:
+
+```
+ansible-playbook main.yml -e "username=test name=test"
+```
+
+Nun können wir zum Beispiel eine Zeile hinzufügen, wenn wir zum Beispiel einen User zu adm hinzufügen möchten, um nicht ständig als
+root arbeiten müssen.
+
+```
+- name: Add user
+  hosts: all
+  tasks:
+    - name: Add a new user with username, commentname and group
+      user:
+        name: "{{ username }}"
+        comment: "{{ name }}"
+        group: "{{ groupname }}"
+```
+
+Testen wir dies einmal mit folgendem Befehl:
+
+
+```
+ansible-playbook main.yml -e "username=test name=test groupname=add"
+```
+
+# Software Docker installieren und Container automatisiert erstellen
+
+# GitLab 
+
+# Playbook mit allen Roles
+
+## yum Modul hinzufügen
+
+Wir fügen als erstes das yum Modul hinzu, um zu aller erst alle Pakete zu prüfen und ggf. upzudaten.
+
+Wir erstellen hierfür in unserem Projekt eine Datei `main.yml` und fügen folgendes hinzu:
+
+```
+- name: Main Playbook to configure every server with one playbook to all hosts
+  hosts: all
+  tasks:
+    - name: Upgrade all packages
+      yum:
+        name: '*'
+        state: latest
+```
+
+Alternativ:
+
+```
+- name: Main Playbook to configure every server with one playbook to all hosts
+  hosts: all
+  tasks:
+    - name: Upgrade all packages
+      apt:
+        update_cache: yes
+```
+
+## Rollen einfügen und alles ausführen
 
 # Ansible Vault
 
