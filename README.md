@@ -245,9 +245,7 @@ $ itsserver4 ansible_host=10.0.0.14 ansible_ssh_user=itsadmin ansible_ssh_pass=i
 
 
 
-# Weniger priviligierte Accounts erstellen und Gruppen zuordnen mit Variablen
-
-
+# User erstellen und Gruppen zuordnen mit Variablen
 
 Wir erstellen nun eine neue Rolle "add user" um einen User mit weniger priviligierten Rechten zu erstellen und dann Gruppen zuzuordnen.
 
@@ -306,7 +304,7 @@ ansible-playbook main.yml -e "username=test name=test groupname=add"
 
 ## yum Modul hinzufügen
 
-Wir fügen als erstes das yum Modul hinzu, um zu aller erst alle Pakete zu prüfen und ggf. upzudaten.
+Wir fügen als erstes das apt Modul hinzu, um zu aller erst alle Pakete zu prüfen und ggf. upzudaten.
 
 Wir erstellen hierfür in unserem Projekt eine Datei `main.yml` und fügen folgendes hinzu:
 
@@ -315,20 +313,9 @@ Wir erstellen hierfür in unserem Projekt eine Datei `main.yml` und fügen folge
   hosts: all
   tasks:
     - name: Upgrade all packages
-      yum:
+      apt:
         name: '*'
         state: latest
-```
-
-Alternativ:
-
-```
-- name: Main Playbook to configure every server with one playbook to all hosts
-  hosts: all
-  tasks:
-    - name: Upgrade all packages
-      apt:
-        update_cache: yes
 ```
 
 ## Rollen einfügen und alles ausführen
