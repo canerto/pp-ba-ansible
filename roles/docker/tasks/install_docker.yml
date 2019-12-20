@@ -1,6 +1,8 @@
 ---
 - hosts: all
-# become: yes
+  vars_files:
+  - ../vars/main.yml
+  become: yes
   tasks:
   - name: Ensure old versions of Docker are not installed
     apt:
@@ -20,7 +22,7 @@
         - software-properties-common
       state: present
 
-  - name: Add Docker's offical GPG key
+  - name: Add Docker's official GPG key
     apt_key: 
       url: https://download.docker.com/linux/ubuntu/gpg
       id: 9DC858229FC7DD38854AE2D88D81803C0EBFCD88
@@ -44,8 +46,8 @@
         - docker-ce-cli
         - containerd.io
       state: present
-      notify: restart docker
       update_cache: yes
+    notify: restart docker
 
   - name: Ensure Docker is started and enabled at boot
     service:
@@ -55,6 +57,9 @@
 
   - name: Verify that Docker Engine is installed correctly by running hello-world image
     shell: sudo docker run hello-world
+    register: hello
+
+  - debug: var=hello
 
   - name: Manage Docker as a non-root user, so ensure docker users are added to the docker group
     user:                                       
@@ -63,3 +68,10 @@
       append: yes
     with_items: "{{ docker_users }}"
     when: docker_users | length > 0
+
+  - name: Install Docker Module for Python
+    pip:
+      name: docker
+
+  - name: Rebot the machine
+    reboot:

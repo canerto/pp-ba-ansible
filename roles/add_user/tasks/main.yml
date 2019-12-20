@@ -7,4 +7,3 @@
       user:
         name: "{{ username }}"
         comment: "{{ name }}"
-        group: "{{ groupname }}"

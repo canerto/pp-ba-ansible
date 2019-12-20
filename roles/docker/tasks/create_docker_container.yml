@@ -1,0 +1,24 @@
+---
+- hosts: all
+  vars_files:
+  - ../vars/main.yml
+  become: yes
+  tasks:
+  - name: Pull image test with ubuntu:latest 
+    docker_image:
+      name: ubuntu
+      source: pull
+
+  - name: Create ubuntu container with variable numbers
+    docker_container:
+      name: "ubuntu{{item}}"
+      image: ubuntu:latest
+      state: started
+      command: sleep 1d
+    with_sequence: count=4
+
+  - name: List running containers
+    shell: docker ps -a
+    register: container
+
+  - debug: var=container
