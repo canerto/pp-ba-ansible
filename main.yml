@@ -14,3 +14,7 @@
     - name: Install Python
       include_role:
         name: python
+
+    - name: Install Docker and create Container
+      include_role:
+        name:
