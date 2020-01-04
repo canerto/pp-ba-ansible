@@ -1,3 +1,36 @@
+# VM einrichten mit Oracle VirtualBox
+
+1. Datei -> Appliance importieren 
+2. ITS_Client...ova auswählen
+3. Name ändern auf "ITS_Server_X"
+4. Häkchen setzen bei "Zuweisen neuer MAC-Adressen für alle Netzwerkkarten"
+5. Importieren
+6. VM starten, anmelden als "itsadmin" und Konsole starten
+7. Folgende Befehle eingeben, um Hostname und IP der VM umzustellen
+
+
+```
+$ export my_hostname=itsserver
+$ export my_ip_suffix=11
+
+$ if [ -z "${my_hostname}" ] ; then echo "Variable my_hostname nicht gesetzt!" ; fi
+$ if [ -z "${my_ip_suffix}" ] ; then echo "Variable my_ip_suffix nicht gesetzt!" ; fi
+$ sudo /bin/sed -i "s/10.0.0.51/10.0.0.${my_ip_suffix}/g" /etc/network/interfaces 
+$ sudo tee /etc/hosts <<EOF
+127.0.0.1 localhost
+127.0.1.1 ${my_hostname}.itsdomain.local ${my_hostname} 
+10.0.0.11 itsserver.itsdomain.local itsserver
+10.0.0.51 itsclient.itsdomain.local itsclient
+EOF
+
+$ sudo tee /etc/hostname <<EOF
+{my_hostname}
+EOF
+t
+$ sudo /sbin/reboot
+```
+
+
 # Ansible
 
 ## Grundlagen
@@ -215,7 +248,8 @@ $ ssh root@<entfernter Node>
     ansible-playbook <playbook-name>
     ```
 
-4. Fehler andeuten und Erklärung, da Authentifizierung (Erstkontakt) nicht stattfinden kann ohne PW:
+
+4. Fehler andeuten, und Erklärung, da Authentifizierung (Erstkontakt) nicht stattfinden kann ohne PW:
 
 
 ```
@@ -267,6 +301,8 @@ Anschließend fügen wir folgenden Code hinzu:
         name: "{{ username }}"
         comment: "{{ name }}"
 ```
+
+
 
 Hier wurden nun die Variablen "{{ username }}" und "{{ name }}" eingefügt. Das bedeutet, dass man diesem Task eigene Namen übergenen kann.
 Dies kann wie folgt durchgeführt werden:
