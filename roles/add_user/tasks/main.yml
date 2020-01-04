@@ -1,8 +1,8 @@
 ---
 
-- name: Add user 
-  hosts: all
-  tasks:
+#- name: Add user 
+#  hosts: all
+#  tasks:
     - name: Add a new user with username, commentname and group
       user:
         name: "{{ username }}"

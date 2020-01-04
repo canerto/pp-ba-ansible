@@ -1,20 +1,14 @@
 ---
-- name: Main Playbook to configure every server with one playbook to all hosts
+- name: Update all packages, deploy SSH Keys to Managed Nodes, Install Python, Add a new User, Install Webserver, Install Docker and Create Container
   hosts: all
+  become: yes
   tasks:
     - name: Upgrade all packages
-      yum:
-        name: '*'
-        state: latest
-
-    - name: Deploy SSH Keys to Managed Nodes
-      include_role:
-        name: deploy_ssh_keys 
-       
-    - name: Install Python
-      include_role:
-        name: python
-
-    - name: Install Docker and create Container
-      include_role:
-        name:
+      apt:
+   
+  roles:
+    - deploy_ssh_keys
+    - python
+    - add_user
+    - webserver
+    - docker

@@ -1,8 +1,8 @@
 ---
-- hosts: all
-  become: yes
-  remote_user: root
-  tasks:
+#- hosts: all
+#  become: yes
+#  remote_user: root
+#  tasks:
   - name: Install python
     apt:
       name: python3-pip

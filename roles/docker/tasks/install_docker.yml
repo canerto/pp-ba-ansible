@@ -1,9 +1,10 @@
 ---
-- hosts: all
-  vars_files:
-  - ../vars/main.yml
-  become: yes
-  tasks:
+#- hosts: all
+  - include_vars: ../vars/main.yml
+#  vars_files:
+#  - ../vars/main.yml
+#  become: yes
+#  tasks:
   - name: Ensure old versions of Docker are not installed
     apt:
       name:
