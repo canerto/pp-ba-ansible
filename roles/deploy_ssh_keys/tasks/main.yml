@@ -1,13 +1,10 @@
 ---
 
-- name: Public key is deployed to managed hosts for Ansible 
-#  become: yes
-#  hosts: all
-#  tasks:
-#    - name: Ensure key is in root's ~/.ssh/authorized_keys
-  authorized_key:
-   user: root
-   state: present
-   key: '{{ item }}'
-  with_file:
-   - ~/.ssh/id_rsa.pub
+#- name: Public key is deployed to managed hosts for Ansible 
+ - name: Ensure key is in root's ~/.ssh/authorized_keys
+   authorized_key:
+    user: root
+    state: present
+    key: '{{ item }}'
+   with_file:
+    - ~/.ssh/id_rsa.pub
