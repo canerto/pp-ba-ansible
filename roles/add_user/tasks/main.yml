@@ -8,5 +8,6 @@
       user:
         name: "{{ item.username }}"
         comment: "{{ item.name }}"
+        password: "{{ item.password | password_hash('sha512') }}"
       with_items: "{{ users }}"
       when: users | length > 0
