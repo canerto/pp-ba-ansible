@@ -1,0 +1,4 @@
+# A list of users who will be added
+users:
+  - name: user1, comment: "User1"
+  - name: user2, comment: "User2"

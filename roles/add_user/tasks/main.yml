@@ -3,7 +3,10 @@
 #- name: Add user 
 #  hosts: all
 #  tasks:
-    - name: Add a new user with username, commentname and group
+    - include_vars: ../vars/main.yml
+    - name: Add a new user with username and commentname, who are defined in vars
       user:
-        name: "{{ username }}"
-        comment: "{{ name }}"
+        name: "{{ item.username }}"
+        comment: "{{ item.name }}"
+      with_items: "{{ users }}"
+      when: users | length > 0
