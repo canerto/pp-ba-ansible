@@ -258,7 +258,8 @@ ansible-playbook <playbook-name> --ask-pass
 
 Alternativ:
 Alternativ kann man in der Inventory angeben, welchen User wir verwenden und welches Passwort. Das Passwort sollte normalerweise nicht 
-als Klartext eingefügt werden. Hierfür gibt es Ansible Vault, womit Passwörter verschlüsselt werden können. Dazu kommen wir aber später.
+als Klartext eingefügt werden. Hierfür gibt es Ansible Vault, womit Passwörter verschlüsselt werden können. 
+Group_vars oder host_vars und dann mit ansible vault verschlüsseln
 
 ```
 $ itsserver1 ansible_host=10.0.0.11 ansible_ssh_user=itsadmin ansible_ssh_pass=itsadmin
@@ -279,9 +280,9 @@ $ itsserver4 ansible_host=10.0.0.14 ansible_ssh_user=itsadmin ansible_ssh_pass=i
 
 
 
-# User erstellen und Gruppen zuordnen mit Variablen
+# User erstellen mit Variablen und Passwörter in vars datei mit Ansible Vault verschlüsseln
 
-Wir erstellen nun eine neue Rolle "add user" um einen User mit weniger priviligierten Rechten zu erstellen und dann Gruppen zuzuordnen.
+Wir erstellen nun eine neue Rolle "add user" um einen User zu erstellen.
 
 ```
 $ cd roles
@@ -333,6 +334,19 @@ ansible-playbook main.yml -e "username=test name=test groupname=add"
 ```
 
 # Software Docker installieren und Container automatisiert erstellen
+
+# Rolle für Webserver erstellen mit LAMP
+
+Test am Ende:
+localhost um apache zu testen
+
+phpinfo.php in /var/www/html/ erstellen mit folgendem Inhalt:
+
+<?php
+phpinfo();
+?>
+
+localhost/phpinfo.php aufrufen
 
 # GitLab 
 
