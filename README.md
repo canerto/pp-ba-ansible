@@ -312,26 +312,64 @@ Dies kann wie folgt durchgeführt werden:
 ansible-playbook main.yml -e "username=test name=test"
 ```
 
-Nun können wir zum Beispiel eine Zeile hinzufügen, wenn wir zum Beispiel einen User zu adm hinzufügen möchten, um nicht ständig als
-root arbeiten müssen.
+Nun erstellen wir einen Ordner /vars und fügen hier die Datei main.yml hinzu, in der wir die Liste unserer User mit Passwort definieren.
+Anschließend können wir diese Liste in unserem Task aufrufen.
+
+In /vars/main.yml
 
 ```
-- name: Add user
-  hosts: all
-  tasks:
-    - name: Add a new user with username, commentname and group
-      user:
-        name: "{{ username }}"
-        comment: "{{ name }}"
-        group: "{{ groupname }}"
+# A list of users who will be added
+users:
+  - username: user1
+    name: "User1"
+    password: "user1"
+  - username: user2
+    name: "User2"
+    password: "user2"
 ```
 
-Testen wir dies einmal mit folgendem Befehl:
+In /tasks/main.yml
+ 
+```
+- include_vars: ../vars/main.yml
+- name: Add a new user with username and commentname who are defined in vars, if the account doesn't exist
+  user:
+    name: "{{ item.username }}"
+    state: present
+    comment: "{{ item.name }}"
+    password: "{{ item.password | password_hash('sha512') }}"
+   with_items: "{{ users }}"
+   when: users | length > 0
+```
 
+Das Passwort muss gehasht werden, da sonst das Passwort bzw. der Login nicht funktioniert. Die Variablen werden aus der
+vars/main.yml gezogen. Die Passwörter in dieser Datei sind jedoch sichtbar und in Plaintext geschrieben.
+Dies wollen wir verhindern, in dem wir Ansible Vault nutzen. Dazu erstellen wir im Ordner vars eine verschlüsselte Datei
+ 
+ `ansible-vault create vault`
+ 
+Hier definieren wir unsere Passwörter unserer User:
 
 ```
-ansible-playbook main.yml -e "username=test name=test groupname=add"
+- - -
+vault_user1_password: user1
+vault_user2_password: user2
 ```
+
+In vars/main.yml:
+
+```
+# A list of users who will be added
+users:
+  - username: user1
+    name: "User1"
+    password: "{{ vault_user1_password }}"
+  - username: user2
+    name: "User2"
+    password: "{{ vault_user2_password }}"
+```
+
+
 
 # Software Docker installieren und Container automatisiert erstellen
 
@@ -372,6 +410,37 @@ Wir erstellen hierfür in unserem Projekt eine Datei `main.yml` und fügen folge
 
 # Ansible Vault
 
+1.Möglichkeit:
+Anlegen einer Datei, Passworteingabe und Text:
+
+```
+ansible-vault create vault.yml
+```
+
+Testen mit cat vault.yml:
+
+2.Möglichkeit: 
+Bestehende Datei verschlüsseln und Passworteingabe
+```
+ansible-vault encrypt existing_file.yml
+```
+
+=> Inhalt sehen mit ansible-vault view vault.yml
+=> Bearbeiten mit ansible-vault edit vault.yml
+=> PW ändern mit ansible-vault rekey vault.yml
+=> ansible-playbook --ask-vault-pass
+=> Passworddatei erstellen und diese referenzieren, ansible-playbook --vault-password-file=path
+=> Passworddatei automatisch lesen in dem environment variable gesetzt wird und in der Konfig angeben
+```
+export ANSIBLE_VAULT_PASSWORD_FILE=PATH
+vim ansible.cfg
+```
+
+In `ansible.cfg`:
+```
+...
+vault_password_file = path
+```
 # Ansible AWX
 
 # Ansible Galaxy
