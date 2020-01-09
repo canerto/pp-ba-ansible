@@ -1,0 +1,31 @@
+---
+#- hosts: webservers
+#  become: yes
+#  tasks:
+
+# Install MySQL, Apache, PHP
+  - include_vars: ../vars/main.yml
+
+  - name: Check if package is already installed
+    stat: path=/etc/init.d/{{ item }}
+    register: "{{ item }}"_installed
+    with_items: "{{ lamp_packages }}"
+
+  - name: Update apt cache if ackage isn't installed yet
+    apt:
+      update_cache: yes
+      cache_valid_time: 3600
+    when: not {{ item }}_installed.stat.exists
+
+  - name: Install package
+    apt:
+      name: "{{ item }}"
+      state: present
+    with_items: "{{ lamp_packages }}"
+
+  - name: Check if package server is running
+    service:
+      name: "{{ item }}"
+      state: started
+    with_items: "{{ lamp_packages }}"
+

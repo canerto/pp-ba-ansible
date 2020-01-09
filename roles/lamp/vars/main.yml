@@ -1,0 +1,7 @@
+# A list of packages which will be installed
+lamp_packages:
+  - mysql
+  - apache2
+  - php
+  - php-mysql
+  - libapache2-mod-php
