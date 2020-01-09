@@ -4,23 +4,23 @@
 #  tasks:
 
 # Install MySQL, Apache, PHP
-  - include_vars: ../vars/main.yml
-
   - name: Check package if installed and installs if not present
     apt:
-      name: "{{ lamp_packages }}"
+      name:
+        - mysql-server
+        - apache2
+        - php
+        - php-mysql
+        - libapache2-mod-php
       update_cache: yes
       cache_valid_time: 3600
       state: present
 
-  - name: Check if package server is running
+  - name: Check if package server is running and enable to start on boot
     service:
-      name: "{{ item }}"
-      state: started
-    with_items: "{{ lamp_packages }}"
-
-  - name: Start service on boot
-    service:
-      name: "{{ item }}"
+      name:
+        - mysql
+        - apache2
+      state: restarted
       enabled: yes
-    with_items: "{{ lamp_packages }}"
+
