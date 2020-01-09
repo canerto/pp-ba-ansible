@@ -6,20 +6,11 @@
 # Install MySQL, Apache, PHP
   - include_vars: ../vars/main.yml
 
-  - name: Check if package is already installed
-    stat: path=/etc/init.d/{{ item }}
-    register: "{{ item }}"_installed
-    with_items: "{{ lamp_packages }}"
-
-  - name: Update apt cache if ackage isn't installed yet
-    apt:
-      update_cache: yes
-      cache_valid_time: 3600
-    when: not {{ item }}_installed.stat.exists
-
-  - name: Install package
+  - name: Check package if installed and install if not
     apt:
       name: "{{ item }}"
+      update_cache: yes
+      cache_valid_time: 3600
       state: present
     with_items: "{{ lamp_packages }}"
 
@@ -29,3 +20,8 @@
       state: started
     with_items: "{{ lamp_packages }}"
 
+  - name: Start service on boot
+    service:
+      name: "{{ item }}"
+      enabled: yes
+    with_items: "{{ lamp_packages }}"
