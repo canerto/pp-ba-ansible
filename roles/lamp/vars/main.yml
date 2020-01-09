@@ -1,6 +1,6 @@
 # A list of packages which will be installed
 lamp_packages:
-  - mysql
+  - mysql-server
   - apache2
   - php
   - php-mysql

@@ -4,9 +4,10 @@
 #  hosts: all
 #  tasks:
     - include_vars: ../vars/main.yml
-    - name: Add a new user with username and commentname, who are defined in vars
+    - name: Add a new user with username and commentname who are defined in vars, if the account doesn't exist
       user:
         name: "{{ item.username }}"
+        state: present
         comment: "{{ item.name }}"
         password: "{{ item.password | password_hash('sha512') }}"
       with_items: "{{ users }}"

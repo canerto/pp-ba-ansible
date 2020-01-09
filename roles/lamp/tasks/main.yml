@@ -6,13 +6,12 @@
 # Install MySQL, Apache, PHP
   - include_vars: ../vars/main.yml
 
-  - name: Check package if installed and install if not
+  - name: Check package if installed and installs if not present
     apt:
-      name: "{{ item }}"
+      name: "{{ lamp_packages }}"
       update_cache: yes
       cache_valid_time: 3600
       state: present
-    with_items: "{{ lamp_packages }}"
 
   - name: Check if package server is running
     service:
