@@ -597,18 +597,85 @@ TODO: Code erklären
 
 # Rolle für Webserver erstellen mit LAMP TODO
 
-Test am Ende:
-localhost um apache zu testen
+1.Wir erstellen nun eine neue Rolle "lamp"
 
-phpinfo.php in /var/www/html/ erstellen mit folgendem Inhalt:
+```
+$ cd roles
+$ mkdir lamp
+$ mkdir tasks
+$ vim main.yml
+```
 
+2. Folgenden Code einfügen:
+
+```
+# Install MySQL, Apache, PHP
+  - name: Check package if installed and installs if not present
+    apt:
+      pkg:
+        - "mysql-server"
+        - "apache2"
+        - "php"
+        - "php-mysql"
+        - "libapache2-mod-php"
+      update_cache: yes
+      cache_valid_time: 3600
+      state: present
+
+  - name: Check if mysql is running and enable to start on boot
+    service:
+      name: mysql
+      state: started
+      enabled: yes
+
+  - name: Check if apache2 is running and enable to start on boot
+    service:
+      name: apache2
+      state: started
+      enabled: yes
+```
+
+3.Endversion Playbook mit allen Roles
+```
+- - -
+- name: Update all packages, deploy SSH Keys to Managed Nodes, Install Python, Add a new User, Install Docker and Create Container
+  hosts: all
+  become: yes
+  become_user: root
+  become_method: sudo
+  tasks:
+    - name: Update all packages
+      apt:
+       upgrade: dist
+   
+  roles:
+    - deploy_ssh_keys
+    - python
+    - add_user
+    - docker
+
+- name: Install LAMP (MySQL, Apache, PHP) on webservers
+  hosts: webservers
+  become: yes
+  become_user: root
+  become_method: sudo
+
+  roles:
+    - lamp
+```
+
+4.Test apache => localhost im Browser aufrufen
+
+5.Test php => phpinfo.php in /var/www/html/ erstellen mit folgendem Inhalt:
+
+```
 <?php
 phpinfo();
 ?>
+```
 
-localhost/phpinfo.php aufrufen
+6.localhost/phpinfo.php aufrufen
 
-# Playbook mit allen Roles
 
 # Ansible Vault
 
