@@ -109,9 +109,52 @@ $ sudo apt-add-repository --yes --update ppa:ansible/ansible
 $ sudo apt install ansible
 ```
 
-### Ordnerstruktur
+### Ordnerstruktur Best Practice https://docs.ansible.com/ansible/latest/user_guide/playbooks_best_practices.html
 
---
+```
+production                # inventory file for production servers
+staging                   # inventory file for staging environment
+
+group_vars/
+   group1.yml             # here we assign variables to particular groups
+   group2.yml
+host_vars/
+   hostname1.yml          # here we assign variables to particular systems
+   hostname2.yml
+
+library/                  # if any custom modules, put them here (optional)
+module_utils/             # if any custom module_utils to support modules, put them here (optional)
+filter_plugins/           # if any custom filter plugins, put them here (optional)
+
+site.yml                  # master playbook
+webservers.yml            # playbook for webserver tier
+dbservers.yml             # playbook for dbserver tier
+
+roles/
+    common/               # this hierarchy represents a "role"
+        tasks/            #
+            main.yml      #  <-- tasks file can include smaller files if warranted
+        handlers/         #
+            main.yml      #  <-- handlers file
+        templates/        #  <-- files for use with the template resource
+            ntp.conf.j2   #  <------- templates end in .j2
+        files/            #
+            bar.txt       #  <-- files for use with the copy resource
+            foo.sh        #  <-- script files for use with the script resource
+        vars/             #
+            main.yml      #  <-- variables associated with this role
+        defaults/         #
+            main.yml      #  <-- default lower priority variables for this role
+        meta/             #
+            main.yml      #  <-- role dependencies
+        library/          # roles can also include custom modules
+        module_utils/     # roles can also include custom module_utils
+        lookup_plugins/   # or other types of plugins, like lookup in this case
+
+    webtier/              # same kind of structure as "common" was above, done for the webtier role
+    monitoring/           # ""
+    fooapp/               # ""
+```
 
 ### Konfiguration Ansible
 
@@ -136,12 +179,6 @@ $ itsserver4 ansible_host=10.0.0.14
 
 Wir haben nun die Hosts angegeben mit der IP-Adresse. 
 
-```
-A trivial test module, this module always returns pong on successful contact. It does not make sense in playbooks, but it is useful from /usr/bin/ansible to verify the ability to login and that a usable python is configured.
-    This is NOT ICMP ping, this is just a trivial test module.
-    For Windows targets, use the win_ping module instead.
-```
-
 Nun können wir testen, ob alles richtig konfiguriert wurde, in dem wir zuerst einmal vesuchen den ersten Host zu 
 pingen und schauen, welche Rückmeldung wir erhalten:
 
@@ -154,6 +191,13 @@ itsserver1 | SUCCESS => {
     "changed": false,
     "ping": "pong"
 }
+```
+
+Hinweis: 
+```
+A trivial test module, this module always returns pong on successful contact. It does not make sense in playbooks, but it is useful from /usr/bin/ansible to verify the ability to login and that a usable python is configured.
+This is NOT ICMP ping, this is just a trivial test module.
+For Windows targets, use the win_ping module instead.
 ```
 
 Dieser Befehl bezieht sich auf einen in der Inventory-Datei befindenden Hosts. Wenn wir nun alle Hosts anpingen möchten,
@@ -224,32 +268,63 @@ $ ssh root@<entfernter Node>
 
 ### mit einem Playbook für alle Nodes
 
-1. Deployen der SSH-Keys für Nodes 2-4
+1. Wir erstellen dazu einen Ordner roles, in dem alle Rollen enthalten sein werden und die dazugehörigen Playbooks
+
+```
+$ mkdir roles
+$ cd roles
+$ mkdir deploy_ssh_keys
+$ cd deploy_ssh_keys
+$ vim main.yml 
+```
+
+In main.yml folgendes einfügen:
+
+```
+ - name: Ensure key is in root's ~/.ssh/authorized_keys     # Beschreibung
+   authorized_key:                                          # Modul für authorized_key
+    user: root                                              # Remoteuser
+    state: present                                          # present, da die Datei hinzugefügt werden soll (sonst absent)
+    key: '{{ item }}'                                       
+   with_file:
+    - ~/.ssh/id_rsa.pub
+```
+
+Im Anschluss im Hauptverzeichnis (gleiche Ebene wie roles) eine `main.yml` erstellen, da wir in dieser Hauptdatei, alle Rollen aufrufen werden.
+
+```
+$ vim main.yml
+```
+
+In main.yml folgendes einfügen:
+
+```
+- - -
+- name: Update all packages, deploy SSH Keys to Managed Nodes 
+  hosts: all
+  become: yes
+  become_user: root
+  become_method: sudo
+  tasks:
+    - name: Update all packages
+      apt:
+       upgrade: dist
+   
+  roles:
+    - deploy_ssh_keys
+    
+```
+TODO: Erklärung der einzelnen Zeilen
+
+Hiermit deployen wir die SSH-Keys für Nodes 2-4. Dies testen wir nun, indem wir folgendes ausführen:
  
-2. Playbook mit Erklärung der einzelnen Zeilen (absent, exclusive, ...)
+```
+ansible-playbook <playbook-name>
+```
 
-    ```
-    - name: Public key is deployed to managed hosts for Ansible
-      hosts: all
-
-      tasks:
-      - name: Ensure key is in root's ~/.ssh/authorized_hosts
-        authorized_key:
-         user: root
-         state: present
-         key: '{{ item }}'
-        with_file:
-         - ~/.ssh/id_rsa.pub
-    ```
-
-3. Befehl zum Ausführen des Playbooks:
-
-    ```
-    ansible-playbook <playbook-name>
-    ```
-
-
-4. Fehler andeuten, und Erklärung, da Authentifizierung (Erstkontakt) nicht stattfinden kann ohne PW:
+Wir bekommen die Fehlermeldung, dass wir keinen Zugriff haben (Permission denied), da hierfür Root-Rechte benötigt werden
+und somit beim Erstkontakt keine Authentifizierung ohne Passwort stattfinden kann. Dazu muss einmalig folgender Befehl ausgeführt
+werden und das Passwort angegeben werden, wenn dies angefordert wird.
 
 
 ```
@@ -257,9 +332,10 @@ ansible-playbook <playbook-name> --ask-pass
 ```
 
 Alternativ:
-Alternativ kann man in der Inventory angeben, welchen User wir verwenden und welches Passwort. Das Passwort sollte normalerweise nicht 
-als Klartext eingefügt werden. Hierfür gibt es Ansible Vault, womit Passwörter verschlüsselt werden können. 
-Group_vars oder host_vars und dann mit ansible vault verschlüsseln
+Alternativ kann man in der Inventory angeben, welchen User wir verwenden und welches Passwort. Das Passwort sollte normalerweise 
+nicht als Klartext eingefügt werden. Hierfür gibt es Ansible Vault, womit Passwörter verschlüsselt werden können. 
+Dazu kann man die Variablen in group_vars referenzieren und anschließend mit Ansible Vault verschlüsseln. Ein Beispiel hierfür
+wird im nächsten Kapitel thematisiert.
 
 ```
 $ itsserver1 ansible_host=10.0.0.11 ansible_ssh_user=itsadmin ansible_ssh_pass=itsadmin
@@ -268,17 +344,48 @@ $ itsserver3 ansible_host=10.0.0.13 ansible_ssh_user=itsadmin ansible_ssh_pass=i
 $ itsserver4 ansible_host=10.0.0.14 ansible_ssh_user=itsadmin ansible_ssh_pass=itsadmin
 ```
 
-5. Unterschied von manueller Verteilung für ein Host und Verteilung mit einem Playbook für mehrere Hosts
+TODO: Unterschied von manueller Verteilung für ein Host und Verteilung mit einem Playbook für mehrere Hosts
 
-6. Als Rolle hinzufügen (Best Practice: https://docs.ansible.com/ansible/latest/user_guide/playbooks_best_practices.html)
+# Python installieren (notwendig auf allen Managed Nodes)
 
-    1. Roles Ordner erstellen
-    2. Neuer Ordner mit Rollen-Name => deploy_ssh_keys
-    3. Ordner "tasks" erstellen
-    4. main.yml erstellen
-    5. Code hinzufügen von Punkt 2
+1.Neue Rolle erstellen 
 
+```
+$ cd roles
+$ mkdir pyhton
+$ mkdir tasks
+$ vim main.yml
+```
 
+2.Code einfügen
+
+```
+- name: Install python
+  apt:
+    name: python3-pip
+    state: latest
+    update_cache: yes
+```
+    
+3.Als Rolle einfügen in der Hauptdatei und anschließend ausführen
+
+```
+- - -
+- name: Update all packages, deploy SSH Keys to Managed Nodes 
+  hosts: all
+  become: yes
+  become_user: root
+  become_method: sudo
+  tasks:
+    - name: Update all packages
+      apt:
+       upgrade: dist
+   
+  roles:
+    - deploy_ssh_keys
+    - python
+    
+```
 
 # User erstellen mit Variablen und Passwörter in vars datei mit Ansible Vault verschlüsseln
 
@@ -288,7 +395,7 @@ Wir erstellen nun eine neue Rolle "add user" um einen User zu erstellen.
 $ cd roles
 $ mkdir add_user
 $ mkdir tasks
-$ vim add_user
+$ vim main.yml
 ```
 
 Anschließend fügen wir folgenden Code hinzu:
@@ -302,8 +409,6 @@ Anschließend fügen wir folgenden Code hinzu:
         name: "{{ username }}"
         comment: "{{ name }}"
 ```
-
-
 
 Hier wurden nun die Variablen "{{ username }}" und "{{ name }}" eingefügt. Das bedeutet, dass man diesem Task eigene Namen übergenen kann.
 Dies kann wie folgt durchgeführt werden:
@@ -369,11 +474,128 @@ users:
     password: "{{ vault_user2_password }}"
 ```
 
-
-
 # Software Docker installieren und Container automatisiert erstellen
 
-# Rolle für Webserver erstellen mit LAMP
+1.Wir erstellen nun eine neue Rolle "docker", diesmal mit zwei Dateien, da wir eine Installations-Playbook 
+`install_docker.yml` erstellen und diese dann in die `main.yml` imkludieren.
+
+```
+$ cd roles
+$ mkdir docker
+$ mkdir tasks
+$ touch install_docker.yml
+$ touch main.yml
+```
+
+2. Installation von Docker, dazu folgenden Code in `install_docker.yml` einfügen:
+```
+- - -
+  - name: Ensure old versions of Docker are not installed
+    apt:
+      name:
+        - docker
+        - docker-common
+        - docker-engine
+      state: absent
+
+  - name: Ensure dependencies are installed
+    apt:
+      name: 
+        - apt-transport-https
+        - ca-certificates
+        - curl
+        - gnupg-agent
+        - software-properties-common
+      state: present
+
+  - name: Add Docker's official GPG key
+    apt_key: 
+      url: https://download.docker.com/linux/ubuntu/gpg
+      id: 9DC858229FC7DD38854AE2D88D81803C0EBFCD88
+      state: present
+
+  - name: Verify the fingerprint
+    shell: sudo apt-key fingerprint 0EBFCD88
+    register: fingerprint
+
+  - debug: var=fingerprint
+
+  - name: Add Docker repository
+    apt_repository:
+      repo: "{{ docker_apt_repository }}"
+      state: present
+
+  - name: Install Docker
+    apt:
+      name:
+        - docker-ce
+        - docker-ce-cli
+        - containerd.io
+      state: present
+      update_cache: yes
+    notify: restart docker
+
+  - name: Ensure Docker is started and enabled at boot
+    service:
+      name: docker
+      state: started
+      enabled: yes
+
+  - name: Verify that Docker Engine is installed correctly by running hello-world image
+    shell: sudo docker run hello-world
+    register: hello
+
+  - debug: var=hello
+
+  - name: Manage Docker as a non-root user, so ensure docker users are added to the docker group
+    user:                                       
+      name: "{{ item }}"
+      group: docker 
+      append: yes
+    with_items: "{{ docker_users }}"
+    when: docker_users | length > 0
+
+  - name: Install Docker Module for Python
+    pip:
+      name: docker
+
+  - name: Reboot the machine
+    reboot:
+```
+
+TODO: Code erklären
+
+3. Vars erstellen
+
+4. Handlers
+
+5. Erstellen von bel. Anzahl von Containern mit Ubuntu-Images, dazu folgenden Code in `main.yml` einfügen:
+```
+- - -
+  - import_tasks: install_docker.yml
+  - include_vars: ../vars/main.yml
+  - name: Pull image test with ubuntu:latest 
+    docker_image:
+      name: ubuntu
+      source: pull
+
+  - name: Create ubuntu container with variable numbers
+    docker_container:
+      name: "ubuntu{{item}}"
+      image: ubuntu:latest
+      state: started
+      command: sleep 1d
+    with_sequence: count=4
+
+  - name: List running containers
+    shell: docker ps -a
+    register: container
+
+  - debug: var=container
+```
+TODO: Code erklären
+
+# Rolle für Webserver erstellen mit LAMP TODO
 
 Test am Ende:
 localhost um apache zu testen
@@ -386,27 +608,7 @@ phpinfo();
 
 localhost/phpinfo.php aufrufen
 
-# GitLab 
-
 # Playbook mit allen Roles
-
-## yum Modul hinzufügen
-
-Wir fügen als erstes das apt Modul hinzu, um zu aller erst alle Pakete zu prüfen und ggf. upzudaten.
-
-Wir erstellen hierfür in unserem Projekt eine Datei `main.yml` und fügen folgendes hinzu:
-
-```
-- name: Main Playbook to configure every server with one playbook to all hosts
-  hosts: all
-  tasks:
-    - name: Upgrade all packages
-      apt:
-        name: '*'
-        state: latest
-```
-
-## Rollen einfügen und alles ausführen
 
 # Ansible Vault
 

@@ -74,5 +74,5 @@
     pip:
       name: docker
 
-  - name: Rebot the machine
+  - name: Reboot the machine
     reboot:
