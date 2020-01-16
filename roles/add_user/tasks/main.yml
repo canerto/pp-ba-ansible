@@ -3,7 +3,13 @@
 #- name: Add user 
 #  hosts: all
 #  tasks:
-    - include_vars: ../vars/main.yml
+
+    - name: Include the list of users
+      include_vars: ../vars/main.yml
+
+    - name: Include the encrypted user passwords
+      include_vars:  ../vars/vault
+
     - name: Add a new user with username and commentname who are defined in vars, if the account doesn't exist
       user:
         name: "{{ item.username }}"

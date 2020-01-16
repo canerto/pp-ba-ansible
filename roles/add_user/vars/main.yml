@@ -1,8 +1,9 @@
 # A list of users who will be added
+
 users:
   - username: user1
     name: "User1"
-    password: "user1"
+    password: "{{ user1password }}"
   - username: user2
     name: "User2"
-    password: "user2"
+    password: "{{ user2password }}"
