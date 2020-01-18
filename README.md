@@ -7,10 +7,33 @@
 5. Importieren
 6. VM starten, anmelden als "itsadmin" und Konsole starten
 7. Folgende Befehle eingeben, um Hostname und IP der VM umzustellen
+8. Falls Fehler auftritt => Change Network Settings => OK
 
+itsserver1 10.0.0.11 1 Core, 2GB
+
+itsserver2 10.0.0.21 1 Core, 2 GB
+
+itsserver3 10.0.0.31 1 Core, 2 GB
+
+awxclient  10.0.0.41 2 Core, 4 GB
+
+itsclient  10.0.0.51 1 Core 2 GB
 
 ```
-$ export my_hostname=itsserver
+-- itsclient
+sudo tee /etc/hosts <<EOF
+127.0.0.1 localhost
+127.0.1.1 itsclient.itsdomain.local itsclient
+10.0.0.11 itsserver1.itsdomain.local itsserver1
+10.0.0.21 itsserver2.itsdomain.local itsserver2
+10.0.0.31 itsserver3.itsdomain.local itsserver3
+10.0.0.41 awxclient.itsdomain.local awxclient
+10.0.0.51 itsclient.itsdomain.local itsclient
+EOF
+sudo /sbin/reboot
+
+--itsserver1
+$ export my_hostname=itsserver1
 $ export my_ip_suffix=11
 
 $ if [ -z "${my_hostname}" ] ; then echo "Variable my_hostname nicht gesetzt!" ; fi
@@ -19,16 +42,88 @@ $ sudo /bin/sed -i "s/10.0.0.51/10.0.0.${my_ip_suffix}/g" /etc/network/interface
 $ sudo tee /etc/hosts <<EOF
 127.0.0.1 localhost
 127.0.1.1 ${my_hostname}.itsdomain.local ${my_hostname} 
-10.0.0.11 itsserver.itsdomain.local itsserver
+10.0.0.11 itsserver1.itsdomain.local itsserver1
+10.0.0.21 itsserver2.itsdomain.local itsserver2
+10.0.0.31 itsserver3.itsdomain.local itsserver3
+10.0.0.41 awxclient.itsdomain.local awxclient
 10.0.0.51 itsclient.itsdomain.local itsclient
 EOF
 
 $ sudo tee /etc/hostname <<EOF
-{my_hostname}
+${my_hostname}
 EOF
-t
+$ sudo /sbin/reboot
+
+--itsserver2
+$ export my_hostname=itsserver2
+$ export my_ip_suffix=21
+
+$ if [ -z "${my_hostname}" ] ; then echo "Variable my_hostname nicht gesetzt!" ; fi
+$ if [ -z "${my_ip_suffix}" ] ; then echo "Variable my_ip_suffix nicht gesetzt!" ; fi
+$ sudo /bin/sed -i "s/10.0.0.51/10.0.0.${my_ip_suffix}/g" /etc/network/interfaces 
+$ sudo tee /etc/hosts <<EOF
+127.0.0.1 localhost
+127.0.1.1 ${my_hostname}.itsdomain.local ${my_hostname} 
+10.0.0.11 itsserver1.itsdomain.local itsserver1
+10.0.0.21 itsserver2.itsdomain.local itsserver2
+10.0.0.31 itsserver3.itsdomain.local itsserver3
+10.0.0.41 awxclient.itsdomain.local awxclient
+10.0.0.51 itsclient.itsdomain.local itsclient
+EOF
+
+$ sudo tee /etc/hostname <<EOF
+${my_hostname}
+EOF
+$ sudo /sbin/reboot
+
+
+--itsserver3
+
+$ export my_hostname=itsserver3
+$ export my_ip_suffix=31
+
+$ if [ -z "${my_hostname}" ] ; then echo "Variable my_hostname nicht gesetzt!" ; fi
+$ if [ -z "${my_ip_suffix}" ] ; then echo "Variable my_ip_suffix nicht gesetzt!" ; fi
+$ sudo /bin/sed -i "s/10.0.0.51/10.0.0.${my_ip_suffix}/g" /etc/network/interfaces 
+$ sudo tee /etc/hosts <<EOF
+127.0.0.1 localhost
+127.0.1.1 ${my_hostname}.itsdomain.local ${my_hostname} 
+10.0.0.11 itsserver1.itsdomain.local itsserver1
+10.0.0.21 itsserver2.itsdomain.local itsserver2
+10.0.0.31 itsserver3.itsdomain.local itsserver3
+10.0.0.41 awxclient.itsdomain.local awxclient
+10.0.0.51 itsclient.itsdomain.local itsclient
+EOF
+
+$ sudo tee /etc/hostname <<EOF
+${my_hostname}
+EOF
+$ sudo /sbin/reboot
+
+--awxclient
+$ export my_hostname=awxclient
+$ export my_ip_suffix=41
+
+$ if [ -z "${my_hostname}" ] ; then echo "Variable my_hostname nicht gesetzt!" ; fi
+$ if [ -z "${my_ip_suffix}" ] ; then echo "Variable my_ip_suffix nicht gesetzt!" ; fi
+$ sudo /bin/sed -i "s/10.0.0.51/10.0.0.${my_ip_suffix}/g" /etc/network/interfaces 
+$ sudo tee /etc/hosts <<EOF
+127.0.0.1 localhost
+127.0.1.1 ${my_hostname}.itsdomain.local ${my_hostname} 
+10.0.0.11 itsserver1.itsdomain.local itsserver1
+10.0.0.21 itsserver2.itsdomain.local itsserver2
+10.0.0.31 itsserver3.itsdomain.local itsserver3
+10.0.0.41 awxclient.itsdomain.local awxclient
+10.0.0.51 itsclient.itsdomain.local itsclient
+EOF
+
+$ sudo tee /etc/hostname <<EOF
+${my_hostname}
+EOF
 $ sudo /sbin/reboot
 ```
+
+
 
 
 # Ansible
@@ -107,6 +202,7 @@ $ sudo apt update
 $ sudo apt install software-properties-common
 $ sudo apt-add-repository --yes --update ppa:ansible/ansible
 $ sudo apt install ansible
+$ ansible --version
 ```
 
 ### Ordnerstruktur Best Practice https://docs.ansible.com/ansible/latest/user_guide/playbooks_best_practices.html
@@ -161,10 +257,25 @@ roles/
 Die allgemeinen Einstellungen sind in der `ansible.cfg` Datei unter dem Pfad `/etc/ansible/` zu finden. Wir benötigen nun die Inventory-Datei `hosts` im gleichen Ordnern.
 Der Pfad hierfür ist per Default eingestellt auf `/etc/ansible/hosts`, welcher in der `ansible.cfg` Datei geändert werden kann. 
 
+Kopieren der Dateien von /etc/ansible in den eigenen erstellten ansible-Ordner, da per default dort installiert wird
+
+```
+$ sudo cp -r /etc/ansible .
+$ sudo chown -R itsadmin:itsadmin
+```
+
+In ansible.cfg den Inventory-Pfad ändern 
+
+```
+$ vim ansible.cfg
+
+inventory = .
+```
+
 Wir öffnen nun die Datei wie folgt: (sudo, weil etc root gehört)
 
 ```
-$ sudo vim /etc/ansible/hosts
+$ sudo vim ansible/hosts
 ```
 
 Hier sind bereits einige Beispiele enthalten. Man kann die Hosts nun als IP-Adressen, DNS-Namen oder als eigene Namen definieren.
@@ -172,9 +283,8 @@ Wir fügen nun folgende Zeilen hinzu und speichern anschließend die Datei:
 
 ```
 $ itsserver1 ansible_host=10.0.0.11 
-$ itsserver2 ansible_host=10.0.0.12 
-$ itsserver3 ansible_host=10.0.0.13 
-$ itsserver4 ansible_host=10.0.0.14 
+$ itsserver2 ansible_host=10.0.0.21 
+$ itsserver3 ansible_host=10.0.0.31 
 ```
 
 Wir haben nun die Hosts angegeben mit der IP-Adresse. 
@@ -207,7 +317,7 @@ können wir folgenden Befehl nutzen:
 $ ansible -m ping all
 ``` 
 
-Als Ausgabe sollten wir folgendes erhalten:
+Als Ausgabe sollten wir folgendes erhalten (zuerst SSH)
 
 ```
 itsserver1 | SUCCESS => {
@@ -256,8 +366,8 @@ den private und public Key.
 Der public Key muss nun auf die zu verwaltenden Nodes kopiert werden.
 
 ```
-$ cd /root/.ssh/
-$ ssh-copyid root@<entfernter Node>
+$ cd .ssh/
+$ ssh-copy-id itsadmin@<entfernter Node>
 ```
 
 Im Anschluss versuchen wir eine SSH-Verbindung auf den zu verwaltenden Node aufzubauen, ohne ein Passwort eingeben zu müssen.
@@ -265,6 +375,8 @@ Im Anschluss versuchen wir eine SSH-Verbindung auf den zu verwaltenden Node aufz
 ```
 $ ssh root@<entfernter Node>
 ```
+
+PING => FEHLERMELDUNG PYTHON3, dazu kommen wir aber später
 
 ### mit einem Playbook für alle Nodes
 

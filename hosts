@@ -15,16 +15,10 @@
 ## 192.168.100.1
 ## 192.168.100.10
 
-itsserver ansible_host=10.0.0.11 ansible_ssh_user=itsadmin ansible_ssh_pass=itsadmin
-itsserver1 ansible_host=10.0.0.21 ansible_ssh_user=itsadmin ansible_ssh_pass=itsadmin
-itsserver2 ansible_host=10.0.0.31 
+
 # Ex 2: A collection of hosts belonging to the 'webservers' group
 
-[awx]
-awxclient ansible_host=10.0.0.41
-
-[webservers]
-itsserver ansible_host=10.0.0.11 ansible_ssh_user=itsadmin ansible_ssh_pass=itsadmin
+## [webservers]
 ## alpha.example.org
 ## beta.example.org
 ## 192.168.1.100
@@ -49,3 +43,13 @@ itsserver ansible_host=10.0.0.11 ansible_ssh_user=itsadmin ansible_ssh_pass=itsa
 
 ## db-[99:101]-node.example.com
 
+itsserver1 ansible_host=10.0.0.11 #ansible_ssh_user=itsadmin ansible_ssh_pass=itsadmin
+itsserver2 ansible_host=10.0.0.21 #ansible_ssh_user=itsadmin ansible_ssh_pass=itsadmin
+itsserver3 ansible_host=10.0.0.31
+
+[awx]
+awxclient ansible_host=10.0.0.41
+
+[webservers]
+itsserver1 ansible_host=10.0.0.11 #ansible_ssh_user=itsadmin ansible_ssh_pass=itsadmin
+itsserver2 ansible_host=10.0.0.21 #ansible_ssh_user=itsadmin ansible_ssh_pass=itsadmin
