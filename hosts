@@ -21,7 +21,8 @@ itsserver2 ansible_host=10.0.0.31
 # Ex 2: A collection of hosts belonging to the 'webservers' group
 
 [awx]
-awx ansible_host=10.0.0.41
+awxclient ansible_host=10.0.0.41
+
 [webservers]
 itsserver ansible_host=10.0.0.11 ansible_ssh_user=itsadmin ansible_ssh_pass=itsadmin
 ## alpha.example.org

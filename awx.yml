@@ -16,7 +16,6 @@
   roles:
     - deploy_ssh_keys
     - python
-    - geerlingguy.repo-epel
     - geerlingguy.git
     - geerlingguy.ansible
     - geerlingguy.docker
