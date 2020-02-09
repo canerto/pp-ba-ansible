@@ -269,7 +269,7 @@ In ansible.cfg den Inventory-Pfad ändern
 ```
 $ vim ansible.cfg
 
-inventory = .
+inventory = ./hosts
 ```
 
 Wir öffnen nun die Datei wie folgt: (sudo, weil etc root gehört)
@@ -296,10 +296,28 @@ pingen und schauen, welche Rückmeldung wir erhalten:
 $ ansible -m ping itsserver1
 ```
 
+Erste Verbindung, deshalb die Frage:
+'The authenticity of host '10.0.0.11 (10.0.0.11)' can't be established. ECDSA key fingerprint is ... '
+Are you sure you want to continue connecting (yes/no)?
+
+ 
+ERWARTUNG:
+
 ```
 itsserver1 | SUCCESS => {
     "changed": false,
     "ping": "pong"
+}
+```
+
+FEHLERMELDUNG:
+
+```
+itsserver1 | UNREACHABLE => {
+    "changed": false,
+    "msg": "Failed to connect to the host via ssh: Warning: Permanently added '10.0.0.11 (ECDSA) to the list of known hosts. 
+     Permission denid (publickey, password). ",
+    "unreachable": true
 }
 ```
 
@@ -387,6 +405,8 @@ $ mkdir roles
 $ cd roles
 $ mkdir deploy_ssh_keys
 $ cd deploy_ssh_keys
+$ mkdir tasks
+$ cd tasks
 $ vim main.yml 
 ```
 
@@ -458,7 +478,12 @@ $ itsserver4 ansible_host=10.0.0.14 ansible_ssh_user=itsadmin ansible_ssh_pass=i
 
 TODO: Unterschied von manueller Verteilung für ein Host und Verteilung mit einem Playbook für mehrere Hosts
 
-# Python installieren (notwendig auf allen Managed Nodes)
+# Python installieren/Prüfung, ob neueste Version installiert ist (notwendig auf allen Managed Nodes)
+=> [DEPRECATION WARNING]: Distribution Ubuntu 16.04 on host itsserver should use /usr/bin/python3, but is using /usr/bin/python
+for backward compatibility with prior Ansible releases. A future Ansible release will defaulto to using the discoverd platform
+python for this host. See https://docs.ansible.com/ansible/2.9/reference_appendices/interpreter_discovery.html for more information.
+This feature will be removed in version 2.12. Deprecation warnings can be disabled by setting deprecation_warnings=False in
+ansible.cfg
 
 1.Neue Rolle erstellen 
 
