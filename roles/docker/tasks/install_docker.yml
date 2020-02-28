@@ -73,6 +73,7 @@
   - name: Install Docker Module for Python
     pip:
       name: docker
+      executable: pip3
 
   - name: Reboot the machine
     reboot:

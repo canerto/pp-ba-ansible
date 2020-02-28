@@ -8,6 +8,17 @@
   apt_repository:
     repo: ppa:ansible/ansible
 
+- name: Update apt cache
+  apt: 
+    update_cache: yes
+
 - name: Install ansible
   apt:
     name: ansible
+    state: present
+
+
+#- name: Install Ansible via pip
+#  pip:
+#    name: ansible
+#    extra_args: --user

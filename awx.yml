@@ -5,4 +5,7 @@
   become_method: sudo
 
   roles:
+#    - geerlingguy.ansible
+    - deploy_ssh_keys
+    - python
     - awx

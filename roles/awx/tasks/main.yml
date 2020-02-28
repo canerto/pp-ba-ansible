@@ -4,21 +4,26 @@
   apt:
     upgrade: dist
 
-# Install Ansible
+- name: Install pip
+  apt:
+    name: python-pip
+    state : present
+
 - import_tasks: ansible.yml
 
-- name: Install pip
-  package:
-    name:
-    state : python3-pip
-
 - import_tasks: ../../docker/tasks/install_docker.yml
+- include_vars: ../../docker/vars/main.yml
+
+- import_tasks: ../../docker/handlers/main.yml
+#- include_role: 
+#    name: docker
 
 - name: Install docker-compose and docker python module
   pip:
     name:
       - docker-compose
-      - docker
+     # - docker
+    executable: pip
 
 - name: Install git, npm and build-essential (including gcc, g++ and make)
   apt:
