@@ -12,7 +12,7 @@
   roles:
     - deploy_ssh_keys
     - python
-    - add_user
+#    - add_user
     - docker
 
 - name: Install LAMP (MySQL, Apache, PHP) on webservers
