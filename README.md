@@ -849,6 +849,36 @@ vault_password_file = path
 ```
 # Ansible AWX
 
+### Voraussetzungen
+ 
+### Installationsvoraussetzungen (gemäß https://github.com/ansible/awx/blob/devel/INSTALL.md)
+
+- Ansible Version 2.8+
+- Docker
+- Docker python module
+- GNU Make
+- Git
+- Node & NPM
+
+### Systemvoraussetzungen
+
+- At least 4GB of memory
+- At least 2 cpu cores
+- At least 20GB of space
+- Running Docker, Openshift, or Kubernetes
+
+## Installation
+
+- siehe awx.yml, dazu unteranderem ansible role erstellen und komponenten reinschreiben wie im ersten abschnitt unter ansible installieren
+(Hilfe durch https://computingforgeeks.com/how-to-install-ansible-awx-on-ubuntu-linux/ )
+
+- in awx VM folgendes durchführen:
+    * im home Verzeichnis: git clone https://github.com/ansible/awx.git
+    * cd awx/installer/
+    * ansible-playbook -i inventory install.yml
+  
+
+
 # Ansible Galaxy
 
 # Ansible Doc

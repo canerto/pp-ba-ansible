@@ -1,0 +1,56 @@
+---
+
+- name: Update all packages to the latest version
+    apt:
+      upgrade: dist
+
+# Install Ansible
+- import_tasks: ansible.yml
+
+# Install Docker
+- import_tasks: ../../docker/tasks/install_docker.yml
+
+
+- name: Install pip
+  package:
+    name:
+    state : python3-pip
+
+- name: Install docker-compose and docker python module
+  pip3:
+    name:
+      - docker-compose
+      - docker
+
+- name: Install git, npm and build-essential (including gcc, g++ and make)
+  apt:
+    name:
+      - git
+      - nodejs
+      - npm
+      - build-essential
+    state: present
+    update_cache: yes
+
+- name: Install npm
+  npm:
+    name: npm
+    global: yes
+
+
+
+
+
+
+
+
+
+  roles:
+    - deploy_ssh_keys
+    - python
+    - geerlingguy.git
+    - geerlingguy.ansible
+    - geerlingguy.docker
+    - geerlingguy.pip
+    - geerlingguy.nodejs
+    - geerlingguy.awx
