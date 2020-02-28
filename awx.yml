@@ -1,3 +1,4 @@
+---
 - name: Update all packages, deploy SSH Keys to AWX Node and install AWX with all relevant packages
   hosts: awx
   become: yes
@@ -11,11 +12,12 @@
   tasks:
     - name: Update all packages
       apt:
-        upgrade: dist
+        update_cache: yes
 
   roles:
     - deploy_ssh_keys
     - python
+#    - lucasmaurice.awx
     - geerlingguy.git
     - geerlingguy.ansible
     - geerlingguy.docker
