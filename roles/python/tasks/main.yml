@@ -7,7 +7,7 @@
   - name: Install python
     apt:
       name:
-       - python 
+       - python3
       state: present
       update_cache: yes
 

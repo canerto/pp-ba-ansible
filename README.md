@@ -849,6 +849,12 @@ vault_password_file = path
 ```
 # Ansible AWX
 
+
+https://techexpert.tips/de/ansible-de/ansible-awx-installation-auf-ubuntu-linux/
+https://computingforgeeks.com/how-to-install-ansible-awx-on-ubuntu-linux/
+
+
+
 ### Voraussetzungen
  
 ### Installationsvoraussetzungen (gemäß https://github.com/ansible/awx/blob/devel/INSTALL.md)
@@ -876,6 +882,9 @@ vault_password_file = path
     * im home Verzeichnis: git clone https://github.com/ansible/awx.git
     * cd awx/installer/
     * ansible-playbook -i inventory install.yml
+    
+- Falls folgender Fehler eintritt ...
+=> pip install docker-compose
   
 
 

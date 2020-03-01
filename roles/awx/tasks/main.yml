@@ -6,7 +6,7 @@
 
 - name: Install pip
   apt:
-    name: python-pip
+    name: python3-pip
     state : present
 
 - import_tasks: ansible.yml
@@ -15,15 +15,15 @@
 - include_vars: ../../docker/vars/main.yml
 
 - import_tasks: ../../docker/handlers/main.yml
-#- include_role: 
+#- include_role:
 #    name: docker
 
-- name: Install docker-compose and docker python module
+- name: Install docker-compose and docker python module (which is delivered with docker-compose or in installation with docker)
   pip:
     name:
       - docker-compose
      # - docker
-    executable: pip
+    executable: pip3
 
 - name: Install git, npm and build-essential (including gcc, g++ and make)
   apt:
@@ -39,3 +39,4 @@
   npm:
     name: npm
     global: yes
+    state: present
