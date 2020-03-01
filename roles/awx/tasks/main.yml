@@ -27,7 +27,7 @@
       - docker-compose
      # - docker
     executable: pip3
-    #extra_args: --upgrade
+    extra_args: --upgrade
     state: latest
 
 - name: Install git, npm and build-essential (including gcc, g++ and make)
