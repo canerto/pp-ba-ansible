@@ -74,8 +74,6 @@
     pip:
       name: docker
       executable: pip3
-      extra_args: --upgrade
-      state: forcereinstall
 
   - name: Reboot the machine
     reboot:

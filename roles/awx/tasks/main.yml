@@ -3,7 +3,6 @@
 - name: Update all packages to the latest version
   apt:
     upgrade: dist
-    update_cache: yes
 
 - name: Install pip
   apt:
@@ -31,10 +30,8 @@
   pip:
     name:
       - docker-compose
-     # - docker
+      - docker
     executable: pip3
-    #extra_args: --upgrade
-    #state: forcereinstall
 
 - name: Install git, npm and build-essential (including gcc, g++ and make)
   apt:
