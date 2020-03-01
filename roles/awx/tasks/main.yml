@@ -30,7 +30,7 @@
   pip:
     name:
       - docker-compose
-      - docker
+      - docker-py
     executable: pip3
     state: latest
 
