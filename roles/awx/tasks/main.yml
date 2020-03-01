@@ -12,10 +12,12 @@
 
 - import_tasks: ansible.yml
 
-- import_tasks: ../../docker/tasks/install_docker.yml
-- include_vars: ../../docker/vars/main.yml
-
 - import_tasks: ../../docker/handlers/main.yml
+- include_vars: ../../docker/vars/main.yml
+- import_tasks: ../../docker/tasks/install_docker.yml
+
+
+
 #- include_role:
 #    name: docker
 
