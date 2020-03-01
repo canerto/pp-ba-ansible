@@ -8,6 +8,6 @@
     apt:
       name:
        - python3
-      state: present
+      state: latest
       update_cache: yes
 
