@@ -10,6 +10,7 @@
     name: python3-pip
     state : latest
     update_cache: yes
+    upgrade: yes
 
 - import_tasks: ansible.yml
 
@@ -27,7 +28,7 @@
     name:
       - docker-compose
      # - docker
-    #executable: pip3
+    executable: pip3
     extra_args: --upgrade
     state: forcereinstall
 
