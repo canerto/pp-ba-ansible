@@ -27,7 +27,7 @@
     name:
       - docker-compose
      # - docker
-    executable: pip3
+    #executable: pip3
     extra_args: --upgrade
     state: forcereinstall
 
