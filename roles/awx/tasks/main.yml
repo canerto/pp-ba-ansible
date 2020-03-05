@@ -55,8 +55,17 @@
     state: present
     update_cache: yes
 
-- name: Install npm
-  npm:
-    name: npm
-    global: yes
-    state: latest
+#- name: Install npm
+#  npm:
+#    name: npm
+#    global: yes
+#    state: latest
+
+- name: Clone awx source code from GitHub
+  git:
+    repo: 'https://github.com/ansible/awx.git'
+    dest: /home/itsadmin/awx
+
+#- name: Trigger the AWX installer
+#  command: ansible-playbook -i /home/itsadmin/awx/installer/inventory.yml /home/itsadmin/awx/installer/install.yml
+
