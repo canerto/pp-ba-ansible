@@ -26,24 +26,24 @@
 #- include_role:
 #    name: docker
 
-#- name: Install docker-compose and docker python module (which is delivered with docker-compose or in installation with docker)
-#  pip:
-#    name:
-#      - docker-compose
+- name: Install docker-compose and docker python module (which is delivered with docker-compose or in installation with docker)
+  pip:
+    name:
+      - docker-compose
 #      - docker-py
-#    executable: pip3
-#    state: latest
+    executable: pip2
+    state: latest
 
 - name: Delete existing docker-compose version
   file:
     path: "/usr/local/bin/docker-compose"
     state: absent
 
-- name: Install docker-compose
-  get_url:
-    url: https://github.com/docker/compose/releases/download/1.25.4/docker-compose-Linux-x86_64
-    dest: "/usr/local/bin/docker-compose"
-    mode: 0755
+#- name: Install docker-compose
+#  get_url:
+#    url: https://github.com/docker/compose/releases/download/1.25.4/docker-compose-Linux-x86_64
+#    dest: "/usr/local/bin/docker-compose"
+#    mode: 0755
 
 - name: Install git, npm and build-essential (including gcc, g++ and make)
   apt:
