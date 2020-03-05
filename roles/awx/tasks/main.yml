@@ -26,13 +26,13 @@
 #- include_role:
 #    name: docker
 
-#- name: Install docker-compose and docker python module (which is delivered with docker-compose or in installation with docker)
-#  pip:
-#    name:
+- name: Install docker-compose and docker python module (which is delivered with docker-compose or in installation with docker)
+  pip:
+    name:
 #      - docker-compose
-#      # - docker
-#    executable: pip3
-#    state: latest
+      - docker-py
+    executable: pip3
+    state: latest
 
 - name: Delete existing docker-compose version
   file:
