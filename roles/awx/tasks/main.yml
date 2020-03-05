@@ -6,13 +6,13 @@
 
 - name: Install pip
   apt:
-    name: python3-pip
+    name: python-pip
     state: latest
 
 - name: Upgrade pip
   pip:
     name: pip
-    executable: pip
+    executable: pip2
     extra_args: --upgrade
 
 - import_tasks: ansible.yml
