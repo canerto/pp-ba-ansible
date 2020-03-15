@@ -270,6 +270,8 @@ In ansible.cfg den Inventory-Pfad ändern
 $ vim ansible.cfg
 
 inventory = ./hosts
+roles_path= /etc/ansible/roles:/home/itsadmin/pp-ba-ansible/roles
+
 ```
 
 Wir öffnen nun die Datei wie folgt: (sudo, weil etc root gehört)
@@ -335,7 +337,7 @@ können wir folgenden Befehl nutzen:
 $ ansible -m ping all
 ``` 
 
-Als Ausgabe sollten wir folgendes erhalten (zuerst SSH)
+Als Ausgabe sollten wir folgendes erhalten (zuerst SSH und dann PING)
 
 ```
 itsserver1 | SUCCESS => {
@@ -391,10 +393,24 @@ $ ssh-copy-id itsadmin@<entfernter Node>
 Im Anschluss versuchen wir eine SSH-Verbindung auf den zu verwaltenden Node aufzubauen, ohne ein Passwort eingeben zu müssen.
 
 ```
-$ ssh root@<entfernter Node>
+$ ssh itsadmin@<entfernter Node>
 ```
 
-PING => FEHLERMELDUNG PYTHON3, dazu kommen wir aber später
+Im entfernten Node müssen wir noch folgendes ausführen: (linuxacademy nachgucken)
+```
+$ sudo visudo
+```
+
+Folgende Zeile eintragen:
+
+```
+$ itsadmin ALL= (ALL) NOPASSWD: ALL
+```
+
+Hiermit wird festgelegt, dass der User itsadmin, die Programme mit sudo Privilegien ausführen kann, ohne jedesmal Passwörter 
+angeben zu müssen.
+
+(PING => FEHLERMELDUNG PYTHON3, dazu kommen wir aber später)
 
 ### mit einem Playbook für alle Nodes
 
@@ -420,6 +436,15 @@ In main.yml folgendes einfügen:
     key: '{{ item }}'                                       
    with_file:
     - ~/.ssh/id_rsa.pub
+
+- name: Validate the sudoers file before saving
+  lineinfile:
+    path: /etc/sudoers
+    state: present
+    line: '%itsadmin ALL=(ALL) NOPASSWD: ALL'
+    validate: /usr/sbin/visudo -cf %s
+    backup: yes
+
 ```
 
 Im Anschluss im Hauptverzeichnis (gleiche Ebene wie roles) eine `main.yml` erstellen, da wir in dieser Hauptdatei, alle Rollen aufrufen werden.
@@ -499,7 +524,9 @@ $ vim main.yml
 ```
 - name: Install python
   apt:
-    name: python3-pip
+    name: 
+      - python3
+      - python3-pip
     state: latest
     update_cache: yes
 ```
@@ -522,6 +549,13 @@ $ vim main.yml
     - deploy_ssh_keys
     - python
     
+```
+
+4.In der Inventory folgendes einfügen:
+
+```
+[all:vars]
+ansible_python_interpreter=/usr/bin/python3   
 ```
 
 # User erstellen mit Variablen und Passwörter in vars datei mit Ansible Vault verschlüsseln
@@ -590,6 +624,8 @@ Dies wollen wir verhindern, in dem wir Ansible Vault nutzen. Dazu erstellen wir 
  
  `ansible-vault create vault`
  
+ => Hier Einführung in Ansible Vault
+ 
 Hier definieren wir unsere Passwörter unserer User:
 
 ```
@@ -611,10 +647,12 @@ users:
     password: "{{ vault_user2_password }}"
 ```
 
+
+Befehl: => ansible-playbook --ask-vault-pass
 # Software Docker installieren und Container automatisiert erstellen
 
 1.Wir erstellen nun eine neue Rolle "docker", diesmal mit zwei Dateien, da wir eine Installations-Playbook 
-`install_docker.yml` erstellen und diese dann in die `main.yml` imkludieren.
+`install_docker.yml` erstellen und diese dann in die `main.yml` inkludieren.
 
 ```
 $ cd roles
@@ -813,6 +851,8 @@ phpinfo();
 
 6.localhost/phpinfo.php aufrufen
 
+7.systemctl status (apache2, mysql)
+
 
 # Ansible Vault
 
@@ -877,16 +917,18 @@ https://computingforgeeks.com/how-to-install-ansible-awx-on-ubuntu-linux/
 
 - siehe awx.yml, dazu unteranderem ansible role erstellen und komponenten reinschreiben wie im ersten abschnitt unter ansible installieren
 (Hilfe durch https://computingforgeeks.com/how-to-install-ansible-awx-on-ubuntu-linux/ )
+=> ansible-playbook awx.yml --ask-pass 
 
 - in awx VM folgendes durchführen:
     * im home Verzeichnis: git clone https://github.com/ansible/awx.git
     * cd awx/installer/
+    * in inventory erste Zeilt ansible_python_interpreter=usr/bin/python3 ändern 
     * ansible-playbook -i inventory install.yml
     
-- Falls folgender Fehler eintritt ...
-=> pip install docker-compose
-  
-
+   
+   
+- Im Browser eingeben: localhost:80
+- Credentials: admin & password 
 
 # Ansible Galaxy
 
