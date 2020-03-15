@@ -53,3 +53,6 @@ awxclient ansible_host=10.0.0.41
 [webservers]
 itsserver1 ansible_host=10.0.0.11 #ansible_ssh_user=itsadmin ansible_ssh_pass=itsadmin
 itsserver2 ansible_host=10.0.0.21 #ansible_ssh_user=itsadmin ansible_ssh_pass=itsadmin
+
+[all:vars]
+ansible_python_interpreter=/usr/bin/python3
