@@ -73,7 +73,7 @@
   - name: Install Docker Module for Python
     pip:
       name: docker
-      executable: pip2
+      #executable: pip3
       state: latest
 
   - name: Reboot the machine

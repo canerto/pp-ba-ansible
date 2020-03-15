@@ -13,22 +13,13 @@
     - deploy_ssh_keys
     - python
     - add_user
-#    - docker
+    - docker
 
-#- name: Install LAMP (MySQL, Apache, PHP) on webservers
-#  hosts: webservers
-#  become: yes
+- name: Install LAMP (MySQL, Apache, PHP) on webservers
+  hosts: webservers
+  become: yes
 #  become_user: root
 #  become_method: sudo
 
-#  roles:
-#    - lamp
-
-#- name: Install AWX
-#  hosts: awx
-#  become: yes
-#  become_user: root
-#  become_method: sudo
-
-#  roles:
-#    - awx
+  roles:
+    - lamp
