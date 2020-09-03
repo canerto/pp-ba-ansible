@@ -7,3 +7,9 @@ users:
   - username: user2
     name: "User2"
     password: "{{ user2password }}"
+
+
+    vault.yml
+
+    user1password: user1
+    user2password: user2

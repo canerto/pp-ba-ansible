@@ -16,4 +16,3 @@
     line: 'itsadmin ALL=(ALL) NOPASSWD: ALL'
     validate: /usr/sbin/visudo -cf %s
     backup: yes
-

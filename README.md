@@ -187,6 +187,7 @@ und sind einfach zu lesen, zu schreiben und zu verstehen.
 
 ### Roles
 Eine Role ist eine Sammlung von mehreren Playbooks, die notwendig sind um ein Zielszenario zu erreichen, z.B. ein Webserver installieren.
+roles_path= /etc/ansible/roles:/home/itsadmin/pp-ba-ansible/roles in ansible.cfg einfügen
 
 ## Einführung
 
@@ -396,7 +397,7 @@ Im Anschluss versuchen wir eine SSH-Verbindung auf den zu verwaltenden Node aufz
 $ ssh itsadmin@<entfernter Node>
 ```
 
-Im entfernten Node müssen wir noch folgendes ausführen: (linuxacademy nachgucken)
+Im entfernten Node müssen wir noch folgendes ausführen:
 ```
 $ sudo visudo
 ```
@@ -787,12 +788,12 @@ $ vim main.yml
 # Install MySQL, Apache, PHP
   - name: Check package if installed and installs if not present
     apt:
-      pkg:
-        - "mysql-server"
-        - "apache2"
-        - "php"
-        - "php-mysql"
-        - "libapache2-mod-php"
+      #pkg:
+        - mysql-server
+        - apache2
+        - php
+        - php-mysql
+        - libapache2-mod-php
       update_cache: yes
       cache_valid_time: 3600
       state: present
@@ -893,6 +894,8 @@ vault_password_file = path
 https://techexpert.tips/de/ansible-de/ansible-awx-installation-auf-ubuntu-linux/
 https://computingforgeeks.com/how-to-install-ansible-awx-on-ubuntu-linux/
 
+https://www.howtoforge.de/anleitung/ansible-awx-leitfaden-grundverwendung-und-konfiguration/
+
 
 
 ### Voraussetzungen
@@ -925,11 +928,6 @@ https://computingforgeeks.com/how-to-install-ansible-awx-on-ubuntu-linux/
     * in inventory erste Zeilt ansible_python_interpreter=usr/bin/python3 ändern 
     * ansible-playbook -i inventory install.yml
     
-   
-   
 - Im Browser eingeben: localhost:80
 - Credentials: admin & password 
 
-# Ansible Galaxy
-
-# Ansible Doc

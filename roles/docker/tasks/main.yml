@@ -1,7 +1,7 @@
 ---
 #- hosts: all
   - import_tasks: install_docker.yml
-  - include_vars: ../vars/main.yml
+#  - include_vars: ../vars/main.yml
 #  vars_files:
 #  - ../vars/main.yml
 #  become: yes
@@ -16,7 +16,7 @@
       name: "ubuntu{{item}}"
       image: ubuntu:latest
       state: started
-      command: sleep 1d
+      command: sleep infinity
     with_sequence: count=4
 
   - name: List running containers

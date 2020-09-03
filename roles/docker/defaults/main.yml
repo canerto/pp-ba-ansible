@@ -8,3 +8,6 @@ docker_apt_repository: "deb [arch={{ docker_apt_arch }}] https://download.docker
 # A list of users who will be added to the docker group
 docker_users:
 - itsadmin
+- user1
+- user2
+- user3

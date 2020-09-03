@@ -43,9 +43,9 @@
 
 ## db-[99:101]-node.example.com
 
-itsserver1 ansible_host=10.0.0.11 #ansible_ssh_user=itsadmin ansible_ssh_pass=itsadmin
-itsserver2 ansible_host=10.0.0.21 #ansible_ssh_user=itsadmin ansible_ssh_pass=itsadmin
-itsserver3 ansible_host=10.0.0.31
+itsserver1 #ansible_host=10.0.0.11 #ansible_ssh_user=itsadmin ansible_ssh_pass=itsadmin
+itsserver2 #ansible_host=10.0.0.21 #ansible_ssh_user=itsadmin ansible_ssh_pass=itsadmin
+itsserver3 #ansible_host=10.0.0.31
 
 [awx]
 awxclient ansible_host=10.0.0.41

@@ -6,15 +6,11 @@
 # Install MySQL, Apache, PHP
   - name: Check package if installed and installs if not present
     apt:
-      pkg:
-        - "mysql-server"
-        - "apache2"
-        - "php"
-        - "php-mysql"
-        - "libapache2-mod-php"
+      name: "{{ packages }}"
       update_cache: yes
       cache_valid_time: 3600
       state: present
+    when: packages | length > 0
 
   - name: Check if mysql is running and enable to start on boot
     service:

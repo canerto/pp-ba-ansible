@@ -1,0 +1,7 @@
+---
+- name: Create a LAMP-stack on webservers
+  hosts: webservers
+  become: yes
+
+  roles:
+    - lamp

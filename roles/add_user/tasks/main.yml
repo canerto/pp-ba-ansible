@@ -4,11 +4,8 @@
 #  hosts: all
 #  tasks:
 
-- name: Include the list of users
-  include_vars: ../vars/main.yml
-
 - name: Include the encrypted user passwords
-  include_vars:  ../vars/vault
+  include_vars:  ../defaults/vault
 
 - name: Add a new user with username and commentname who are defined in vars, if the account doesn't exist
   user:

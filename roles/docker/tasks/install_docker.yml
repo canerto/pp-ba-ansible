@@ -30,7 +30,7 @@
       state: present
 
   - name: Verify the fingerprint
-    shell: sudo apt-key fingerprint 0EBFCD88
+    shell: apt-key fingerprint 0EBFCD88
     register: fingerprint
 
   - debug: var=fingerprint
@@ -57,7 +57,7 @@
       enabled: yes
 
   - name: Verify that Docker Engine is installed correctly by running hello-world image
-    shell: sudo docker run hello-world
+    shell: docker run hello-world
     register: hello
 
   - debug: var=hello

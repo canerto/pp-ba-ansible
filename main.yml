@@ -2,8 +2,6 @@
 - name: Update all packages, deploy SSH Keys to Managed Nodes, Install Python, Add a new User, Install Docker and Create Container
   hosts: all
   become: yes
-#  become_user: root
-#  become_method: sudo
   tasks:
     - name: Update all packages
       apt:
@@ -15,11 +13,4 @@
     - add_user
     - docker
 
-- name: Install LAMP (MySQL, Apache, PHP) on webservers
-  hosts: webservers
-  become: yes
-#  become_user: root
-#  become_method: sudo
 
-  roles:
-    - lamp
