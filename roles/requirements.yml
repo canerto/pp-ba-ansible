@@ -2,6 +2,9 @@
 # Role add_user
 
 - src: https://github.com/canerto/add_user
+  scm: git
+  version: master
+  name: add_user
 #- src: https://github.com/canerto/pp-ba-ansible/roles/deploy_ssh_keys
 #- src: https://github.com/canerto/pp-ba-ansible/roles/docker
 #- src: https://github.com/canerto/pp-ba-ansible/roles/lamp
