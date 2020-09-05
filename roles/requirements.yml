@@ -5,17 +5,19 @@
 - src: https://github.com/canerto/ansible-role-add_user
 
 # Role deploy_ssh_keys
-- src: https://github.com/canerto/ansible-role_deploy_ssh_keys
+- src: https://github.com/canerto/ansible-role-deploy_ssh_keys
 
 # Role docker
-- src: https://github.com/canerto/ansible-role_docker
+- src: https://github.com/canerto/ansible-role-docker
 
 # Role lamp
-- src: https://github.com/canerto/ansible-role_lamp
+- src: https://github.com/canerto/ansible-role-lamp
 
 # Role python
-- src: https://github.com/canerto/ansible-role_python
+- src: https://github.com/canerto/ansible-role-python
 
+# Role awx
+- src: https://github.com/canerto/ansible-role-awx
 
 # Install all roles from Galaxy
 - name:
