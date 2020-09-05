@@ -1,14 +1,25 @@
 ---
-# Role add_user
 
+# Install all roles from GitHub
+# Role add_user
 - src: https://github.com/canerto/ansible-role-add_user
-  scm: git
-  version: master
-  name: ansible-role-add_user
-#- src: https://github.com/canerto/pp-ba-ansible/roles/deploy_ssh_keys
-#- src: https://github.com/canerto/pp-ba-ansible/roles/docker
-#- src: https://github.com/canerto/pp-ba-ansible/roles/lamp
-#- src: https://github.com/canerto/pp-ba-ansible/roles/python
-#  scm: git
-#  version: master
-#  name: roles
+
+# Role deploy_ssh_keys
+- src: https://github.com/canerto/ansible-role_deploy_ssh_keys
+
+# Role docker
+- src: https://github.com/canerto/ansible-role_docker
+
+# Role lamp
+- src: https://github.com/canerto/ansible-role_lamp
+
+# Role python
+- src: https://github.com/canerto/ansible-role_python
+
+
+# Install all roles from Galaxy
+- name:
+  - geerlingguy.php
+  - geerlingguy.apache
+  - geerlingguy.php
+  - geerlingguy.php-mysql
