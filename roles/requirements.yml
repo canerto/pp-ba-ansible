@@ -19,9 +19,8 @@
 # Role awx
 - src: https://github.com/canerto/ansible-role-awx
 
-# Install all roles from Galaxy
-- name:
-  - geerlingguy.php
-  - geerlingguy.apache
-  - geerlingguy.php
-  - geerlingguy.php-mysql
+# Install all roles from Galaxy for LAMP-Stack, Jeff Geerling
+- name: geerlingguy.php
+- name: geerlingguy.apache
+- name: geerlingguy.php
+- name: geerlingguy.php-mysql

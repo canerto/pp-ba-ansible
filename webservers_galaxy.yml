@@ -1,0 +1,10 @@
+---
+- name: Create a LAMP-Stack on webservers with roles from galaxy
+  hosts: webservers
+  become: yes
+
+  roles:
+    - geerlingguy.mysql
+    - geerlingguy.apache
+    - geerlingguy.php
+    - geerlingguy.php-mysql

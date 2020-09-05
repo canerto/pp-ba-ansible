@@ -1,5 +1,5 @@
 ---
-- name: Create a LAMP-stack on webservers
+- name: Create a LAMP-stack on webservers with own role
   hosts: webservers
   become: yes
 
