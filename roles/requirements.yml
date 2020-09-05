@@ -1,0 +1,5 @@
+---
+- src: https://github.com/canerto/pp-ba-ansible.git
+  scm: git
+  version: master
+  name: roles
